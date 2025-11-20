@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>弹出文字页面</title>
+    <title>转盘游戏 - Tag vs TP</title>
     <style>
         * {
             margin: 0;
@@ -13,159 +13,330 @@
         }
         
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: white;
-            min-height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
             padding: 20px;
-            text-align: center;
         }
         
         .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             max-width: 800px;
             width: 100%;
-            background-color: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
         
         h1 {
-            font-size: 2.5rem;
             margin-bottom: 20px;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
         
-        p {
-            font-size: 1.2rem;
-            line-height: 1.6;
+        .description {
+            text-align: center;
             margin-bottom: 30px;
-            opacity: 0.9;
-        }
-        
-        .number-display {
-            font-size: 8rem;
-            font-weight: bold;
-            margin: 40px 0;
-            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            color: #ffeb3b;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .info-box {
-            background-color: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 30px;
-        }
-        
-        .btn {
-            background-color: #ff5722;
-            color: white;
-            border: none;
-            padding: 12px 30px;
             font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+        
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 30px auto;
+        }
+        
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s cubic-bezier(0.2, 0.8, 0.3, 1);
+            box-shadow: 0 0 0 8px #fff, 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .section {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            transform-origin: 100% 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .section-tag {
+            left: 0;
+            background: linear-gradient(135deg, #FF416C, #FF4B2B);
+            border-top-left-radius: 150px;
+            border-bottom-left-radius: 150px;
+        }
+        
+        .section-tp {
+            left: 50%;
+            background: linear-gradient(135deg, #38ef7d, #11998e);
+            border-top-right-radius: 150px;
+            border-bottom-right-radius: 150px;
+        }
+        
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 40px;
+            background: #fff;
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border-radius: 50%;
+            z-index: 5;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .spin-button {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #ff8a00, #e52e71);
+            border: none;
             border-radius: 50px;
             cursor: pointer;
-            margin-top: 20px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
-        .btn:hover {
-            background-color: #ff7043;
+        .spin-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
         
-        .features {
+        .spin-button:active {
+            transform: translateY(1px);
+        }
+        
+        .spin-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .result {
+            margin-top: 30px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            min-height: 40px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .stats {
             display: flex;
             justify-content: space-around;
-            flex-wrap: wrap;
-            margin-top: 40px;
-        }
-        
-        .feature {
-            flex: 1;
-            min-width: 200px;
-            margin: 10px;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 400px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
         }
         
-        .feature h3 {
-            margin-bottom: 10px;
-            color: #ffeb3b;
+        .stat-item {
+            text-align: center;
         }
         
-        footer {
-            margin-top: 40px;
-            font-size: 0.9rem;
-            opacity: 0.7;
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .history {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .history-item {
+            padding: 5px 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .history-tag {
+            background: rgba(255, 75, 43, 0.3);
+        }
+        
+        .history-tp {
+            background: rgba(17, 153, 142, 0.3);
+        }
+        
+        @media (max-width: 600px) {
+            .wheel-container {
+                width: 250px;
+                height: 250px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
-<body onload="showAlert()">
+<body>
     <div class="container">
-        <h1>欢迎访问本页面</h1>
-        <p>当您进入此页面时，会自动弹出一个对话框显示数字"123"</p>
+        <h1>转盘游戏</h1>
+        <p class="description">点击旋转按钮，转盘将随机停在Tag或TP区域，每个选项的概率均为50%</p>
         
-        <div class="number-display">123</div>
-        
-        <div class="info-box">
-            <h2>关于这个页面</h2>
-            <p>这是一个简单的HTML页面，使用了JavaScript的alert()函数在页面加载时弹出文字。</p>
-            <button class="btn" onclick="showAlert()">再次弹出"123"</button>
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <div class="wheel" id="wheel">
+                <div class="section section-tag">Tag</div>
+                <div class="section section-tp">TP</div>
+            </div>
+            <div class="center-circle"></div>
         </div>
         
-        <div class="features">
-            <div class="feature">
-                <h3>响应式设计</h3>
-                <p>页面适配各种屏幕尺寸</p>
+        <button class="spin-button" id="spin-button">开始旋转</button>
+        
+        <div class="result" id="result">等待旋转...</div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">Tag次数</div>
+                <div class="stat-value" id="tag-count">0</div>
             </div>
-            <div class="feature">
-                <h3>现代UI</h3>
-                <p>使用渐变背景和毛玻璃效果</p>
+            <div class="stat-item">
+                <div class="stat-label">TP次数</div>
+                <div class="stat-value" id="tp-count">0</div>
             </div>
-            <div class="feature">
-                <h3>交互功能</h3>
-                <p>可点击按钮重复弹出效果</p>
+            <div class="stat-item">
+                <div class="stat-label">总次数</div>
+                <div class="stat-value" id="total-count">0</div>
             </div>
         </div>
+        
+        <div class="history" id="history"></div>
     </div>
-    
-    <footer>
-        <p>© 2023 弹出文字示例页面 | 使用HTML、CSS和JavaScript创建</p>
-    </footer>
 
     <script>
-        function showAlert() {
-            alert("123");
-        }
-        
-        // 添加一些视觉效果
         document.addEventListener('DOMContentLoaded', function() {
-            const numberDisplay = document.querySelector('.number-display');
+            const wheel = document.getElementById('wheel');
+            const spinButton = document.getElementById('spin-button');
+            const resultDisplay = document.getElementById('result');
+            const tagCountDisplay = document.getElementById('tag-count');
+            const tpCountDisplay = document.getElementById('tp-count');
+            const totalCountDisplay = document.getElementById('total-count');
+            const historyDisplay = document.getElementById('history');
             
-            // 添加点击数字的交互效果
-            numberDisplay.addEventListener('click', function() {
-                this.style.transform = 'scale(1.2)';
+            let isSpinning = false;
+            let tagCount = 0;
+            let tpCount = 0;
+            let totalCount = 0;
+            
+            // 旋转转盘函数
+            function spinWheel() {
+                if (isSpinning) return;
+                
+                isSpinning = true;
+                spinButton.disabled = true;
+                resultDisplay.textContent = "旋转中...";
+                
+                // 生成随机结果 (各50%概率)
+                const random = Math.random();
+                const result = random < 0.5 ? 'tag' : 'tp';
+                
+                // 计算旋转角度
+                // 基础旋转圈数 (5-10圈)
+                const baseRotations = 5 + Math.floor(Math.random() * 6);
+                // 根据结果确定最终位置
+                const resultAngle = result === 'tag' ? 180 : 0;
+                // 总旋转角度 = 基础圈数*360 + 结果角度 + 额外随机角度(0-30度)
+                const totalAngle = baseRotations * 360 + resultAngle + Math.floor(Math.random() * 30);
+                
+                // 应用旋转
+                wheel.style.transform = `rotate(${totalAngle}deg)`;
+                
+                // 旋转结束后更新结果
                 setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 300);
-            });
+                    updateResult(result);
+                    isSpinning = false;
+                    spinButton.disabled = false;
+                }, 4000); // 与CSS中的transition时间匹配
+            }
+            
+            // 更新结果和统计
+            function updateResult(result) {
+                // 更新计数
+                if (result === 'tag') {
+                    tagCount++;
+                    resultDisplay.textContent = "结果：Tag!";
+                    resultDisplay.style.color = "#FF4B2B";
+                } else {
+                    tpCount++;
+                    resultDisplay.textContent = "结果：TP!";
+                    resultDisplay.style.color = "#11998e";
+                }
+                totalCount++;
+                
+                // 更新统计显示
+                tagCountDisplay.textContent = tagCount;
+                tpCountDisplay.textContent = tpCount;
+                totalCountDisplay.textContent = totalCount;
+                
+                // 添加历史记录
+                const historyItem = document.createElement('div');
+                historyItem.className = `history-item history-${result}`;
+                historyItem.innerHTML = `
+                    <span>第${totalCount}次</span>
+                    <span>${result.toUpperCase()}</span>
+                    <span>${new Date().toLocaleTimeString()}</span>
+                `;
+                historyDisplay.prepend(historyItem);
+            }
+            
+            // 绑定按钮事件
+            spinButton.addEventListener('click', spinWheel);
         });
     </script>
 </body>
